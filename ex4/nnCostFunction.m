@@ -68,30 +68,25 @@ a2 = sigmoid(z2);
 z3 = [ones(size(a2, 1), 1) a2] * Theta2';
 a3 = sigmoid(z3);
 
-
 for i = 1 : m
   Y = zeros(1, num_labels);
-  Y(1, y(i)) = 1;
+  Y(y(i)) = 1;
     
   % cost
   J = J + sum((-Y .* log(a3(i,:))) - ((1 .- Y) .* log(1 .- a3(i,:))));
 
   % gradient
-  delta3 = a3(i, :) .- Y(i, :);
+  delta3 = a3(i, :) .- Y;
+  delta2 = (Theta2' * delta3')' .* sigmoidGradient([1, z2(i, :)]);
+    
   Theta2_grad = Theta2_grad + delta3' * [1, a2(i, :)];
-  
-  display(size(Theta2));
-display(size(delta3));
-display(size(z2(i, :)));
-  delta2 = Theta2 * delta3 .* sigmoidGradient(z2(i, :));
-  %delta2 = delta2(2:end); 
-  Theta1_grad = Theta1_grad + delta2' * [1, X(i, :)]; 
+  Theta1_grad = Theta1_grad + delta2(2:end)' * [1, X(i, :)]; 
 end
 reg = (lambda * (sum(sum(Theta1(:,2:end) .^2)) + sum(sum(Theta2(:,2:end) .^2)))) / (2 * m);
 J = J / m  + reg;
 
-Theta2_grad = Theta2_grad ./ m;
-Theta3_grad = Theta3_grad ./ m;
+Theta2_grad = (Theta2_grad + (lambda * [zeros(size(Theta2, 1), 1) Theta2(:,2:end)])) ./ m;
+Theta1_grad = (Theta1_grad + (lambda * [zeros(size(Theta1, 1), 1) Theta1(:,2:end)])) ./ m;
 
 % -------------------------------------------------------------
 
@@ -99,6 +94,5 @@ Theta3_grad = Theta3_grad ./ m;
 
 % Unroll gradients
 grad = [Theta1_grad(:) ; Theta2_grad(:)];
-
 
 end
