@@ -49,10 +49,10 @@ for i = 1:num_movies
         X_grad(i, k) = X_grad(i, k) + (X(i, :) * Theta(j, :)' - Y(i, j)) * Theta(j, k);
       end
     end
-    X_grad(i, k) = X_grad(i, k) + lambda * X(i, k);
   end
 %  X_grad(i,:) = sum(R(i,:) .* ((X(i,:) * (Theta(i,:)') .- Y(i,:)) .* Theta(i,:)));
 end
+X_grad = X_grad .+ (X .* lambda);
 
 for j = 1:num_users
   for k = 1:num_features
@@ -61,10 +61,10 @@ for j = 1:num_users
         Theta_grad(j, k) = Theta_grad(j, k) + (X(i, :) * Theta(j, :)' - Y(i, j)) * X(i, k);
       end
     end
-    Theta_grad(j, k) = Theta_grad(j, k) + lambda * Theta(j, k);
   end
   %Theta_grad(i,:) = 
 end
+Theta_grad = Theta_grad .+ (Theta .* lambda);
 
 
 % =============================================================
